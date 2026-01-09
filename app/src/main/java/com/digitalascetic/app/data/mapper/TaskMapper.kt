@@ -59,6 +59,13 @@ class TaskMapper @Inject constructor(
                 title = entity.title,
                 promptText = payload.get("prompt")?.asString
             )
+            TaskType.VIDEO -> Task.VideoTask(
+                id = entity.id,
+                dayId = entity.dayId,
+                title = entity.title,
+                videoUrl = payload.get("video_url")?.asString ?: "",
+                durationMinutes = payload.get("duration_min")?.asInt
+            )
         }
     }
     
@@ -99,6 +106,17 @@ class TaskMapper @Inject constructor(
                 type = TaskType.JOURNAL,
                 title = task.title,
                 payloadJson = gson.toJson(mapOf("prompt" to task.promptText)),
+                appBlockRulesJson = null
+            )
+            is Task.VideoTask -> TaskEntity(
+                id = task.id,
+                dayId = task.dayId,
+                type = TaskType.VIDEO,
+                title = task.title,
+                payloadJson = gson.toJson(mapOf(
+                    "video_url" to task.videoUrl,
+                    "duration_min" to task.durationMinutes
+                )),
                 appBlockRulesJson = null
             )
         }

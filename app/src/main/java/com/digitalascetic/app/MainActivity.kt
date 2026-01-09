@@ -28,7 +28,17 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("program/{programId}") { backStackEntry ->
                             val programId = backStackEntry.arguments?.getString("programId") ?: ""
-                            ProgramDetailScreen(programId = programId)
+                            ProgramDetailScreen(
+                                programId = programId,
+                                onTaskClick = { taskId -> navController.navigate("task/$taskId") }
+                            )
+                        }
+                        composable("task/{taskId}") { backStackEntry ->
+                            val taskId = backStackEntry.arguments?.getString("taskId") ?: ""
+                            com.digitalascetic.app.presentation.ui.screens.TaskDetailScreen(
+                                taskId = taskId,
+                                onBack = { navController.popBackStack() }
+                            )
                         }
                     }
                 }

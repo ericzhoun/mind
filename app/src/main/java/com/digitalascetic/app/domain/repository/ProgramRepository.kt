@@ -10,6 +10,7 @@ interface ProgramRepository {
     suspend fun getProgramById(programId: String): Program?
     suspend fun getDaysForProgram(programId: String): List<ProgramDay>
     suspend fun getTasksForDay(dayId: String): List<Task>
+    suspend fun getTaskById(taskId: String): Task?
     
     // For Phase 1 seeding
     suspend fun insertProgram(program: Program)

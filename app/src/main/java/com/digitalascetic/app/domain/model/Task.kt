@@ -52,5 +52,15 @@ sealed interface Task {
         override val title: String,
         val promptText: String? = null
     ) : Task
+    /**
+     * Video task for lectures or guided sessions (e.g., "Dhamma Talk").
+     */
+    data class VideoTask(
+        override val id: String,
+        override val dayId: String,
+        override val title: String,
+        val videoUrl: String,
+        val durationMinutes: Int? = null
+    ) : Task
 }
 

@@ -49,21 +49,57 @@ class SeedDatabaseUseCase @Inject constructor(
             )
         )
 
-        // Day 1 Schedule
-        val vipD1Id = "vip_d1"
-        programRepository.insertProgramDay(
-            ProgramDay(id = vipD1Id, programId = vipId, dayIndex = 1, theme = "Sila (Morality)", instructionText = "Follow the schedule strictly.")
+        // Vipassana Day 1-10 Videos
+        val vipassanaVideos = listOf(
+            "cz7QHNvNFfA", // Day 1
+            "cYG5VvHry7c", // Day 2
+            "rXXnSK2a47w", // Day 3
+            "UvKl0Wpwbn0", // Day 4
+            "dB0TB7tQoYY", // Day 5
+            "Yxp0mZeK2zk", // Day 6
+            "u4twJT1RfiM", // Day 7
+            "Us5Iq302eNU", // Day 8
+            "OeCO_EQ0vN8", // Day 9
+            "NzrQ2HMFOuo"  // Day 10
         )
-        programRepository.insertTask(
-            Task.TimedTask(
-                id = "vip_d1_t1",
-                dayId = vipD1Id,
-                title = "Morning Meditation",
-                startTime = "04:30",
-                endTime = "06:30",
-                strictMode = true
+
+        for (i in 1..10) {
+            val dayId = "vip_d$i"
+            programRepository.insertProgramDay(
+                ProgramDay(
+                    id = dayId, 
+                    programId = vipId, 
+                    dayIndex = i, 
+                    theme = if (i < 4) "Anapana (Respiration)" else "Vipassana (Sensation)", 
+                    instructionText = "Observe the reality as it is."
+                )
             )
-        )
+
+            // Morning Meditation
+            programRepository.insertTask(
+                Task.TimedTask(
+                    id = "vip_d${i}_t1",
+                    dayId = dayId,
+                    title = "Morning Meditation",
+                    startTime = "04:30",
+                    endTime = "06:30",
+                    strictMode = true
+                )
+            )
+            
+            // Evening Discourse (Video)
+            if (i <= vipassanaVideos.size) {
+                programRepository.insertTask(
+                    Task.VideoTask(
+                        id = "vip_d${i}_video",
+                        dayId = dayId,
+                        title = "Day $i Discourse",
+                        videoUrl = "https://www.youtube.com/embed/${vipassanaVideos[i-1]}?playsinline=1",
+                        durationMinutes = 70
+                    )
+                )
+            }
+        }
     }
 }
 

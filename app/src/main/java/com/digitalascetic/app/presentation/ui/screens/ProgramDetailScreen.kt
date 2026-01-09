@@ -22,6 +22,7 @@ import com.digitalascetic.app.presentation.viewmodel.ProgramDetailViewModel
 @Composable
 fun ProgramDetailScreen(
     programId: String,
+    onTaskClick: (String) -> Unit,
     viewModel: ProgramDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -123,7 +124,7 @@ fun ProgramDetailScreen(
                 }
 
                 items(uiState.tasks) { task ->
-                    TaskItem(task = task)
+                    TaskItem(task = task, onClick = { onTaskClick(task.id) })
                 }
             }
         }
@@ -131,9 +132,11 @@ fun ProgramDetailScreen(
 }
 
 @Composable
-fun TaskItem(task: Task) {
+fun TaskItem(task: Task, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -165,6 +168,9 @@ fun TaskItem(task: Task) {
                     task.promptText?.let {
                         Text("Prompt: $it", style = MaterialTheme.typography.bodySmall, fontStyle = androidx.compose.ui.text.font.FontStyle.Italic)
                     }
+                }
+                is Task.VideoTask -> {
+                    Text("Video: ${task.durationMinutes ?: "?"} mins", style = MaterialTheme.typography.bodySmall)
                 }
             }
         }

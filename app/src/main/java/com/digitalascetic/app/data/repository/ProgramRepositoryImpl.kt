@@ -37,6 +37,11 @@ class ProgramRepositoryImpl @Inject constructor(
         return taskDao.getTasksForDay(dayId).map { taskMapper.toTask(it) }
     }
 
+    override suspend fun getTaskById(taskId: String): Task? {
+        val entity = taskDao.getTaskById(taskId) ?: return null
+        return taskMapper.toTask(entity)
+    }
+
     override suspend fun insertProgram(program: Program) {
         programDao.insertProgram(program.toEntity())
     }

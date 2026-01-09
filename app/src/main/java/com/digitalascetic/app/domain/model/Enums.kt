@@ -10,7 +10,8 @@ enum class TaskType {
     CHECKLIST,   // Simple boolean completion
     TIMED,       // Timer based (e.g., Meditation)
     METRIC,      // Numeric input (e.g., Laps)
-    JOURNAL      // Text input (e.g., Reflection)
+    JOURNAL,     // Text input (e.g., Reflection)
+    VIDEO        // Video content (e.g., Dhamma Talk)
 }
 
 enum class TaskStatus {
