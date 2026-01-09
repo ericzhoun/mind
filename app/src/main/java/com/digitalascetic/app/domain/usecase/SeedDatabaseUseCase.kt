@@ -4,7 +4,6 @@ import com.digitalascetic.app.domain.model.Program
 import com.digitalascetic.app.domain.model.ProgramDay
 import com.digitalascetic.app.domain.model.ProgramType
 import com.digitalascetic.app.domain.model.Task
-import com.digitalascetic.app.domain.model.TaskType
 import com.digitalascetic.app.domain.repository.ProgramRepository
 import javax.inject.Inject
 
@@ -30,12 +29,11 @@ class SeedDatabaseUseCase @Inject constructor(
             ProgramDay(id = day1Id, programId = stoicId, dayIndex = 1, theme = "Intervention", instructionText = "Take a cold shower.")
         )
         programRepository.insertTask(
-            Task(
+            Task.ChecklistTask(
                 id = "stoic_d1_t1",
                 dayId = day1Id,
-                type = TaskType.CHECKLIST,
                 title = "Take a 2 minute cold shower",
-                payloadJson = "{\"duration_min\": 2}"
+                durationMinutes = 2
             )
         )
 
@@ -57,14 +55,15 @@ class SeedDatabaseUseCase @Inject constructor(
             ProgramDay(id = vipD1Id, programId = vipId, dayIndex = 1, theme = "Sila (Morality)", instructionText = "Follow the schedule strictly.")
         )
         programRepository.insertTask(
-            Task(
+            Task.TimedTask(
                 id = "vip_d1_t1",
                 dayId = vipD1Id,
-                type = TaskType.TIMED,
                 title = "Morning Meditation",
-                payloadJson = "{\"start\": \"04:30\", \"end\": \"06:30\"}",
-                appBlockRulesJson = "{\"strict_mode\": true}"
+                startTime = "04:30",
+                endTime = "06:30",
+                strictMode = true
             )
         )
     }
 }
+

@@ -2,10 +2,16 @@ package com.digitalascetic.app.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.digitalascetic.app.domain.model.Task
 import com.digitalascetic.app.domain.model.TaskType
 
+/**
+ * Room entity for storing tasks with polymorphic payloads.
+ * 
+ * The payloadJson field stores type-specific data as JSON.
+ * Use TaskMapper to convert between TaskEntity and Task sealed class.
+ */
 @Entity(
     tableName = "tasks",
     foreignKeys = [
@@ -15,7 +21,8 @@ import com.digitalascetic.app.domain.model.TaskType
             childColumns = ["dayId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["dayId"])]
 )
 data class TaskEntity(
     @PrimaryKey val id: String,
@@ -26,20 +33,3 @@ data class TaskEntity(
     val appBlockRulesJson: String?
 )
 
-fun TaskEntity.toDomain() = Task(
-    id = id,
-    dayId = dayId,
-    type = type,
-    title = title,
-    payloadJson = payloadJson,
-    appBlockRulesJson = appBlockRulesJson
-)
-
-fun Task.toEntity() = TaskEntity(
-    id = id,
-    dayId = dayId,
-    type = type,
-    title = title,
-    payloadJson = payloadJson,
-    appBlockRulesJson = appBlockRulesJson
-)

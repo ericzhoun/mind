@@ -2,6 +2,7 @@ package com.digitalascetic.app.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.digitalascetic.app.domain.model.ProgramDay
 
@@ -14,6 +15,9 @@ import com.digitalascetic.app.domain.model.ProgramDay
             childColumns = ["programId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["programId"])
     ]
 )
 data class ProgramDayEntity(

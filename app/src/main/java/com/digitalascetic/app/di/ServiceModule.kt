@@ -1,9 +1,9 @@
 package com.digitalascetic.app.di
 
-import com.digitalascetic.app.domain.service.GeminiReflectionEngine
+import com.digitalascetic.app.data.service.MockReflectionAI
 import com.digitalascetic.app.domain.service.InterventionManager
 import com.digitalascetic.app.domain.service.InterventionManagerImpl
-import com.digitalascetic.app.domain.service.ReflectionEngine
+import com.digitalascetic.app.domain.service.ReflectionAI
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,9 +16,9 @@ abstract class ServiceModule {
 
     @Binds
     @Singleton
-    abstract fun bindReflectionEngine(
-        geminiReflectionEngine: GeminiReflectionEngine
-    ): ReflectionEngine
+    abstract fun bindReflectionAI(
+        mockReflectionAI: MockReflectionAI
+    ): ReflectionAI
 
     @Binds
     @Singleton

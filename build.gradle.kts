@@ -5,4 +5,5 @@ plugins {
     alias(libs.plugins.hiltAndroid) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.compose.compiler) apply false
+    id("androidx.room") version "2.7.0-alpha05" apply false
 }

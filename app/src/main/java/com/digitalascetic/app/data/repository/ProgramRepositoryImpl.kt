@@ -4,6 +4,7 @@ import com.digitalascetic.app.data.local.dao.ProgramDao
 import com.digitalascetic.app.data.local.dao.TaskDao
 import com.digitalascetic.app.data.local.entity.toDomain
 import com.digitalascetic.app.data.local.entity.toEntity
+import com.digitalascetic.app.data.mapper.TaskMapper
 import com.digitalascetic.app.domain.model.Program
 import com.digitalascetic.app.domain.model.ProgramDay
 import com.digitalascetic.app.domain.model.Task
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 class ProgramRepositoryImpl @Inject constructor(
     private val programDao: ProgramDao,
-    private val taskDao: TaskDao
+    private val taskDao: TaskDao,
+    private val taskMapper: TaskMapper
 ) : ProgramRepository {
 
     override fun getAvailablePrograms(): Flow<List<Program>> {
@@ -32,7 +34,7 @@ class ProgramRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTasksForDay(dayId: String): List<Task> {
-        return taskDao.getTasksForDay(dayId).map { it.toDomain() }
+        return taskDao.getTasksForDay(dayId).map { taskMapper.toTask(it) }
     }
 
     override suspend fun insertProgram(program: Program) {
@@ -44,6 +46,7 @@ class ProgramRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertTask(task: Task) {
-        taskDao.insertTask(task.toEntity())
+        taskDao.insertTask(taskMapper.toEntity(task))
     }
 }
+
