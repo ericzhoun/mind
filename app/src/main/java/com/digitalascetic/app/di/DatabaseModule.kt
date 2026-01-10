@@ -3,6 +3,7 @@ package com.digitalascetic.app.di
 import android.content.Context
 import androidx.room.Room
 import com.digitalascetic.app.data.local.AppDatabase
+import com.digitalascetic.app.data.local.dao.DayNoteDao
 import com.digitalascetic.app.data.local.dao.ProgramDao
 import com.digitalascetic.app.data.local.dao.TaskDao
 import com.digitalascetic.app.data.local.dao.UserProgressDao
@@ -24,7 +25,9 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "digital_ascetic_db"
-        ).build()
+        )
+        .fallbackToDestructiveMigration() // Recreate DB on schema changes (dev mode)
+        .build()
     }
 
     @Provides
@@ -35,4 +38,7 @@ object DatabaseModule {
 
     @Provides
     fun provideUserProgressDao(database: AppDatabase): UserProgressDao = database.userProgressDao()
+    
+    @Provides
+    fun provideDayNoteDao(database: AppDatabase): DayNoteDao = database.dayNoteDao()
 }

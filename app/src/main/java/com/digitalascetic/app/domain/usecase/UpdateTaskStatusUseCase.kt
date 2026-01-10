@@ -17,13 +17,15 @@ class UpdateTaskStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         taskId: String,
         status: TaskStatus,
-        value: String? = null
+        value: String? = null,
+        minutesSpent: Int? = null
     ) {
         val progress = UserProgress(
             taskId = taskId,
             status = status,
             completedAt = if (status == TaskStatus.COMPLETED) LocalDateTime.now() else null,
-            value = value
+            value = value,
+            minutesSpent = minutesSpent
         )
         userProgressRepository.updateProgress(progress)
     }

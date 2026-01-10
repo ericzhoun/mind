@@ -7,10 +7,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +38,16 @@ fun ProgramDetailScreen(
     } else {
         val program = uiState.program
         if (program != null) {
+            // Day Note Dialog
+            if (uiState.showDayNoteDialog) {
+                DayNoteDialog(
+                    noteText = uiState.dayNoteEditText,
+                    onNoteChange = { viewModel.updateDayNoteText(it) },
+                    onDismiss = { viewModel.hideDayNoteDialog() },
+                    onSave = { viewModel.saveDayNote() }
+                )
+            }
+            
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -109,6 +119,43 @@ fun ProgramDetailScreen(
                                         style = MaterialTheme.typography.bodyMedium
                                     )
                                 }
+                                
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Divider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f))
+                                Spacer(modifier = Modifier.height(16.dp))
+                                
+                                // Daily Progress Section
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Daily Progress",
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                    Text(
+                                        text = "${uiState.dayProgressPercentage}%",
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                                LinearProgressIndicator(
+                                    progress = uiState.dayProgressPercentage / 100f,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(8.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceVariant, 
+                                            shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp)
+                                        ),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                                )
                             }
                         }
                     }
@@ -126,9 +173,102 @@ fun ProgramDetailScreen(
                 items(uiState.tasks) { task ->
                     TaskItem(task = task, onClick = { onTaskClick(task.id) })
                 }
+                
+                // Daily Reflection Note Button
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    DailyReflectionButton(
+                        hasNote = uiState.currentDayNote != null,
+                        onClick = { viewModel.showDayNoteDialog() }
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+fun DailyReflectionButton(hasNote: Boolean, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = if (hasNote) 
+                MaterialTheme.colorScheme.tertiaryContainer 
+            else 
+                MaterialTheme.colorScheme.secondaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = null,
+                tint = if (hasNote) 
+                    MaterialTheme.colorScheme.onTertiaryContainer 
+                else 
+                    MaterialTheme.colorScheme.onSecondaryContainer
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = if (hasNote) "Edit Daily Reflection" else "Add Daily Reflection",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = if (hasNote) 
+                    MaterialTheme.colorScheme.onTertiaryContainer 
+                else 
+                    MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        }
+    }
+}
+
+@Composable
+fun DayNoteDialog(
+    noteText: String,
+    onNoteChange: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onSave: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Daily Reflection") },
+        text = {
+            Column {
+                Text(
+                    text = "Reflect on your day. What did you learn? How do you feel?",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = noteText,
+                    onValueChange = onNoteChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    placeholder = { Text("Write your thoughts here...") },
+                    maxLines = 10
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = onSave) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 @Composable

@@ -56,11 +56,26 @@ class SeedDatabaseUseCase @Inject constructor(
             "rXXnSK2a47w", // Day 3
             "UvKl0Wpwbn0", // Day 4
             "dB0TB7tQoYY", // Day 5
-            "Yxp0mZeK2zk", // Day 6
+            "Yxp0mZeK2a47w", // Day 6
             "u4twJT1RfiM", // Day 7
             "Us5Iq302eNU", // Day 8
             "OeCO_EQ0vN8", // Day 9
             "NzrQ2HMFOuo"  // Day 10
+        )
+        
+        // Morning Chanting Videos (S.N. Goenka)
+        val morningChantingVideos = listOf(
+            "N54JkBa-ukM", // Day 1
+            "H5aQeGH4_hs", // Day 2
+            "t9t7yGffyTk", // Day 3
+            "kUfsIWgjzZo", // Day 4
+            "c-v1itVJQqo", // Day 5
+            "Ivg3eJX0r_Q", // Day 6
+            "11glwqynH90", // Day 7
+            "Wr8r6DSJ250", // Day 8
+            "wbziqG5XP_Y", // Day 9
+            "pZeuHjipwcc", // Day 10
+            "NkVVzGgVhzA"  // Day 11
         )
 
         for (i in 1..10) {
@@ -75,7 +90,7 @@ class SeedDatabaseUseCase @Inject constructor(
                 )
             )
 
-            // Morning Meditation
+            // Morning Meditation (Timed Task)
             programRepository.insertTask(
                 Task.TimedTask(
                     id = "vip_d${i}_t1",
@@ -86,6 +101,19 @@ class SeedDatabaseUseCase @Inject constructor(
                     strictMode = true
                 )
             )
+            
+            // Morning Chanting Video
+            if (i <= morningChantingVideos.size) {
+                programRepository.insertTask(
+                    Task.VideoTask(
+                        id = "vip_d${i}_chant",
+                        dayId = dayId,
+                        title = "Morning Chanting - Day $i",
+                        videoUrl = "https://www.youtube.com/embed/${morningChantingVideos[i-1]}?playsinline=1",
+                        durationMinutes = 15
+                    )
+                )
+            }
             
             // Evening Discourse (Video)
             if (i <= vipassanaVideos.size) {

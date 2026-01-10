@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.digitalascetic.app.domain.model.Task
 import com.digitalascetic.app.domain.model.TaskStatus
+import com.digitalascetic.app.domain.model.UserProgress
+import com.digitalascetic.app.domain.repository.UserProgressRepository
 import com.digitalascetic.app.domain.usecase.GetTaskDetailUseCase
 import com.digitalascetic.app.domain.usecase.UpdateTaskStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +20,8 @@ import javax.inject.Inject
 class TaskDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getTaskDetailUseCase: GetTaskDetailUseCase,
-    private val updateTaskStatusUseCase: UpdateTaskStatusUseCase
+    private val updateTaskStatusUseCase: UpdateTaskStatusUseCase,
+    private val userProgressRepository: UserProgressRepository
 ) : ViewModel() {
 
     private val taskId: String = savedStateHandle.get<String>("taskId") ?: ""
@@ -36,11 +39,16 @@ class TaskDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             val task = getTaskDetailUseCase(taskId)
+            
             if (task != null) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    task = task
-                )
+                // Load progress
+                userProgressRepository.getProgressForTask(taskId).collect { progress ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        task = task,
+                        userProgress = progress
+                    )
+                }
             } else {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
@@ -53,7 +61,19 @@ class TaskDetailViewModel @Inject constructor(
     fun completeTask(value: String? = null) {
         viewModelScope.launch {
             updateTaskStatusUseCase(taskId, TaskStatus.COMPLETED, value)
-            loadTask() // Reload to potentially show status change if we tracked it
+        }
+    }
+    
+    fun completeTaskWithProgress(minutesSpent: Int) {
+        viewModelScope.launch {
+            updateTaskStatusUseCase(taskId, TaskStatus.COMPLETED, minutesSpent = minutesSpent)
+        }
+    }
+
+    fun saveProgress(minutesSpent: Int) {
+        viewModelScope.launch {
+            // Keep status as PENDING but update elapsed time
+            updateTaskStatusUseCase(taskId, TaskStatus.PENDING, minutesSpent = minutesSpent)
         }
     }
 }
@@ -61,5 +81,6 @@ class TaskDetailViewModel @Inject constructor(
 data class TaskDetailUiState(
     val isLoading: Boolean = false,
     val task: Task? = null,
+    val userProgress: UserProgress? = null,
     val error: String? = null
 )

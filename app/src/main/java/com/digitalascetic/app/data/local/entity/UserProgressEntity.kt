@@ -23,7 +23,8 @@ data class UserProgressEntity(
     val status: TaskStatus,
     val completedAt: LocalDateTime?,
     val value: String?,
-    val failureReason: String?
+    val failureReason: String?,
+    val minutesSpent: Int?
 )
 
 fun UserProgressEntity.toDomain() = UserProgress(
@@ -31,7 +32,8 @@ fun UserProgressEntity.toDomain() = UserProgress(
     status = status,
     completedAt = completedAt,
     value = value,
-    failureReason = failureReason
+    failureReason = failureReason,
+    minutesSpent = minutesSpent
 )
 
 fun UserProgress.toEntity() = UserProgressEntity(
@@ -39,5 +41,6 @@ fun UserProgress.toEntity() = UserProgressEntity(
     status = status,
     completedAt = completedAt,
     value = value,
-    failureReason = failureReason
+    failureReason = failureReason,
+    minutesSpent = minutesSpent
 )

@@ -1,7 +1,11 @@
 package com.digitalascetic.app.di
 
+import com.digitalascetic.app.data.repository.DayNoteRepositoryImpl
+import com.digitalascetic.app.data.repository.PreferencesRepositoryImpl
 import com.digitalascetic.app.data.repository.ProgramRepositoryImpl
 import com.digitalascetic.app.data.repository.UserProgressRepositoryImpl
+import com.digitalascetic.app.domain.repository.DayNoteRepository
+import com.digitalascetic.app.domain.repository.PreferencesRepository
 import com.digitalascetic.app.domain.repository.ProgramRepository
 import com.digitalascetic.app.domain.repository.UserProgressRepository
 import dagger.Binds
@@ -25,4 +29,16 @@ abstract class RepositoryModule {
     abstract fun bindUserProgressRepository(
         userProgressRepositoryImpl: UserProgressRepositoryImpl
     ): UserProgressRepository
+    
+    @Binds
+    @Singleton
+    abstract fun bindDayNoteRepository(
+        dayNoteRepositoryImpl: DayNoteRepositoryImpl
+    ): DayNoteRepository
+    
+    @Binds
+    @Singleton
+    abstract fun bindPreferencesRepository(
+        preferencesRepositoryImpl: PreferencesRepositoryImpl
+    ): PreferencesRepository
 }
