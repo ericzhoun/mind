@@ -128,6 +128,65 @@ class SeedDatabaseUseCase @Inject constructor(
                 )
             }
         }
+
+        // Seed 7-Day Zen
+        val zenId = "zen_7"
+        programRepository.insertProgram(
+            Program(
+                id = zenId,
+                title = "7-Day Zen Meditation",
+                description = "Cultivate mindfulness and wisdom with Dharma Drum Mountain's online retreat. (法鼓山網路禪修)",
+                type = ProgramType.LINEAR,
+                durationDays = 7
+            )
+        )
+
+        val zenVideos = listOf(
+            Triple(1, "owZv_7_3LRY", "心淨國土淨 (Purity of Mind)"),
+            Triple(2, "nxAPLxxyOm4", "如何保持正念 (Maintaining Mindfulness)"),
+            Triple(3, "JHF59gb-NbM", "禪宗語錄：丈雪通醉 (Chan Records)"),
+            Triple(4, "-_Ydxd-o5uk", "無我的智慧 (Wisdom of No-Self)"),
+            Triple(5, "_JtiDiA3P9E", "安心安業 (Peace of Mind at Work)"),
+            Triple(6, "C61SjsEL1Mw", "正確的禪修發心 (Right Intention)"),
+            Triple(7, "XaoWOkMh3bk", "因緣因果 (Cause and Effect)")
+        )
+
+        zenVideos.forEach { (dayIndex, videoId, title) ->
+            val dayId = "zen_d$dayIndex"
+            
+            programRepository.insertProgramDay(
+                ProgramDay(
+                    id = dayId,
+                    programId = zenId,
+                    dayIndex = dayIndex,
+                    theme = "Zen Day $dayIndex",
+                    instructionText = "Watch the simplified Dharma talk and practice Zazen."
+                )
+            )
+
+            // Video Task
+            programRepository.insertTask(
+                Task.VideoTask(
+                    id = "zen_d${dayIndex}_video",
+                    dayId = dayId,
+                    title = title,
+                    videoUrl = "https://www.youtube.com/embed/$videoId?playsinline=1",
+                    durationMinutes = 20
+                )
+            )
+
+            // Meditation Task (Zazen)
+            programRepository.insertTask(
+                Task.TimedTask(
+                    id = "zen_d${dayIndex}_zazen",
+                    dayId = dayId,
+                    title = "Daily Zazen",
+                    startTime = "07:00",
+                    endTime = "07:30",
+                    strictMode = false
+                )
+            )
+        }
     }
 }
 
